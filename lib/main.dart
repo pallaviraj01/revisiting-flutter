@@ -45,53 +45,143 @@ class MyAppState extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  int selectedIndexOnHomePage = 0;
 }
 
-class MyHomePage extends StatelessWidget{
+// class MyHomePage extends StatelessWidget{
+//   @override
+//   Widget build(BuildContext context) {
+//     var appState = context.watch<MyAppState>();
+//     var pair = appState.current;
+//     IconData icon;
+//     if(appState.favorites.contains(pair)){
+//       icon = Icons.favorite;
+//     } else {
+//       icon = Icons.favorite_border;
+//     }
+//     return Scaffold(
+//       body: Center(
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: [
+//             // Text('A random cool ideas: '),
+//             BigCard(pair: pair),
+//             SizedBox(height: 20,), //these are device independent pixels
+//             Row(
+//               mainAxisSize: MainAxisSize.min,
+//               children: [
+//                 ElevatedButton.icon(
+//                   onPressed: () {
+//                     appState.toggleFavorite();
+//                   }, 
+//                   icon: Icon(icon),
+//                   label: Text('Like'),            
+//                 ),
+//                 SizedBox(width: 10,),
+//                 ElevatedButton(
+//                   onPressed: () {
+//                     //debugPrint('button pressed!');
+//                     appState.getNext();
+//                   }, 
+//                   child: Text('Next'),                  
+//                 ),
+//               ],
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+class MyHomePage extends StatefulWidget{
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  var selectedIndex = 0;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Row(
+        children: [
+          SafeArea(
+            child: NavigationRail(
+              extended: false,
+              destinations: [
+                NavigationRailDestination(
+                  icon: Icon(Icons.home), 
+                  label: Text('Home')
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.favorite), 
+                  label: Text('Favorites'),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.help), 
+                  label: Text('Help'),
+                ),
+              ], 
+              selectedIndex: 0,
+              onDestinationSelected: (value) {
+                //debugPrint('Selected: $value');
+                selectedIndex = value;
+              },
+            ), 
+          ),
+          Expanded(
+            child: Container(
+              color: Theme.of(context).colorScheme.primaryContainer,
+              child: GeneratorPage(),
+            ), 
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class GeneratorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     var pair = appState.current;
 
     IconData icon;
-    if(appState.favorites.contains(pair)){
+    if (appState.favorites.contains(pair)) {
       icon = Icons.favorite;
     } else {
       icon = Icons.favorite_border;
     }
 
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Text('A random cool ideas: '),
-            BigCard(pair: pair),
-            SizedBox(height: 20,), //these are device independent pixels
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ElevatedButton.icon(
-                  onPressed: () {
-                    appState.toggleFavorite();
-                  }, 
-                  icon: Icon(icon),
-                  label: Text('Like'),            
-                ),
-                
-                SizedBox(width: 10,),
-                ElevatedButton(
-                  onPressed: () {
-                    //debugPrint('button pressed!');
-                    appState.getNext();
-                  }, 
-                  child: Text('Next'),
-                  
-                ),
-              ],
-            ),
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          BigCard(pair: pair),
+          SizedBox(height: 10),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ElevatedButton.icon(
+                onPressed: () {
+                  appState.toggleFavorite();
+                },
+                icon: Icon(icon),
+                label: Text('Like'),
+              ),
+              SizedBox(width: 10),
+              ElevatedButton(
+                onPressed: () {
+                  appState.getNext();
+                },
+                child: Text('Next'),
+              ),                         
+            ],
+          ),
         ],
-        ),
       ),
     );
   }
